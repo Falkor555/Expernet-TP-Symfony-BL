@@ -35,6 +35,7 @@ Pages minimales :
 - Inscription / Connexion
 - Page de commande (panier + choix de date)
 
+Lien vers les maquettes Figma : https://www.figma.com/design/AQT59xsQoQq168rpZR4clD/P%C3%A2tisserie-Ancelly?node-id=0-1&t=j7QtwZfRBWcpKhjk-1
 ---
 
 ### Modélisation
