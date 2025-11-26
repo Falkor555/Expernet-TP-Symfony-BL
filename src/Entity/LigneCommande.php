@@ -21,9 +21,11 @@ class LigneCommande
     private ?string $prixUnitaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'lignesCommande')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Commande $commande = null;
 
     #[ORM\ManyToOne(inversedBy: 'lignesCommande')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
 
     public function getId(): ?int
@@ -77,5 +79,10 @@ class LigneCommande
         $this->produit = $produit;
 
         return $this;
+    }
+
+    public function getSousTotal(): float
+    {
+        return (float)$this->prixUnitaire * $this->quantite;
     }
 }
