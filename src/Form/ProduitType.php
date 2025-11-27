@@ -18,16 +18,20 @@ class ProduitType extends AbstractType
             ->add('nom')
             ->add('description')
             ->add('prix')
-            ->add('dateCreation')
-            ->add('isActive')
+            // ->add('dateCreation')
+            // ->add('isActive')
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
                 'multiple' => true,
+                'required' => false,
+                'expanded' => true,
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
+                'required' => false,
+                'placeholder' => 'Choisir une catégorie',
             ])
         ;
     }

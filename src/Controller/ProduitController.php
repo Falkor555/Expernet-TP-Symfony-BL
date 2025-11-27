@@ -14,6 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/produit')]
 final class ProduitController extends AbstractController
 {
+    public function __construct(private EntityManagerInterface $entityManager)
+    {
+    }
     #[Route(name: 'app_produit_index', methods: ['GET'])]
     public function index(ProduitRepository $produitRepository): Response
     {
@@ -22,23 +25,30 @@ final class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_produit_new')]
+    public function create(Request $request): Response
     {
         $produit = new Produit();
+
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($produit);
-            $entityManager->flush();
+            $produitForm = $form->getData();
+            $produitForm->setIsActive(true);
+            $produitForm->setDateCreation(new \DateTime());
+
+            $this->entityManager->persist($produitForm);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Produit créé avec succès !');
 
             return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('produit/new.html.twig', [
-            'produit' => $produit,
-            'form' => $form,
+//            'produit' => $produit,
+            'form' => $form->createView()
         ]);
     }
 
