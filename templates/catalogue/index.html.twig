@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+    <div class="container-fluid px-3 py-4">
+        {# Header avec bouton menu #}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Catalogue</h1>
+            <button class="btn btn-link text-dark p-0" type="button">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+        </div>
+
+        {# Onglets de navigation - Liste des catégories #}
+        <ul class="nav nav-tabs border-0 mb-4">
+            <li class="nav-item">
+                <a class="nav-link active border-0 border-bottom border-3 text-dark" href="{{ path('app_catalogue') }}">
+                    Tous les produits
+                </a>
+            </li>
+            {% for category in categories|default([]) %}
+                <li class="nav-item">
+                    <a class="nav-link text-muted border-0"
+                       href="{{ path('app_category_show', {'id': category.id}) }}">
+                        {{ category.nom }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {# Grille de produits #}
+        <div class="row g-3">
+            {% for produit in produits %}
+            <div class="col-6">
+                <a href="{{ path('app_produit_show', {'id': produit.id}) }}" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm h-100">
+                        <img src="https://via.placeholder.com/300x200" class="card-img-top rounded-top" alt="{{ produit.nom }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title mb-2 text-dark">{{ produit.nom }}</h5>
+                            <p class="card-text text-muted small mb-2">
+                                {{ produit.description|default('Aucune description')|slice(0, 60) }}{% if produit.description|length > 60 %}...{% endif %}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="text-danger fw-bold">{{ produit.prix }}€</span>
+                                <button class="btn btn-danger rounded-circle p-2" type="button"
+                                        onclick="event.preventDefault(); event.stopPropagation(); addToCart({{ produit.id }});">
+                                    <i class="bi bi-plus fs-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucun produit disponible pour le moment.
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Pagination #}
+        {% if produits.items is not empty %}
+        <div class="navigation d-flex justify-content-center mt-4">
+            {{ knp_pagination_render(produits) }}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function addToCart(produitId) {
+            window.location.href = '{{ path('app_panier_add', {'id': '__ID__'}) }}'.replace('__ID__', produitId);
+        }
+    </script>
+{% endblock %}
