@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <div class="container-fluid px-3 py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{{ path('app_catalogue') }}" class="btn btn-link text-dark p-0">
+                <i class="bi bi-arrow-left fs-4"></i>
+            </a>
+            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+        </div>
+
+        <h1 class="mb-4">Connexion</h1>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" action="{{ path('app_login') }}">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Adresse email</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="username" 
+                                       name="_username" 
+                                       value="{{ last_username }}" 
+                                       placeholder="votre@email.com" 
+                                       required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="_password" 
+                                       placeholder="Votre mot de passe" 
+                                       required>
+                            </div>
+                            
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <button type="submit" class="btn btn-danger w-100 py-2 rounded-pill mb-3">
+                                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                            </button>
+                        </form>
+
+                        <hr>
+
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Vous n'avez pas de compte ?</p>
+                            <a href="{{ path('app_utilisateur_new') }}" class="btn btn-outline-secondary w-100 py-2 rounded-pill">
+                                <i class="bi bi-person-plus"></i> S'inscrire
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

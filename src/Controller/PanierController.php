@@ -21,7 +21,7 @@ class PanierController extends AbstractController
     public function index(PanierService $panierService): Response
     {
         return $this->render('panier/index.html.twig', [
-            'items' => $panierService->getFullPanier(),
+            'panier' => $panierService->getFullPanier(),
             'total' => $panierService->getTotal()
         ]);
     }
@@ -40,6 +40,18 @@ class PanierController extends AbstractController
     {
         $panierService->remove($id);
         $this->addFlash('info', 'Produit retiré du panier.');
+
+        return $this->redirectToRoute('app_panier_index');
+    }
+
+    #[Route('/update/{id}/{change}', name: 'app_panier_update')]
+    public function update(int $id, int $change, PanierService $panierService): Response
+    {
+        if ($change > 0) {
+            $panierService->add($id);
+        } elseif ($change < 0) {
+            $panierService->decrease($id);
+        }
 
         return $this->redirectToRoute('app_panier_index');
     }
