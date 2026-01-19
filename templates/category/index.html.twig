@@ -5,11 +5,8 @@
 {% block body %}
     <div class="container-fluid px-3 py-4">
         {# Header avec bouton menu #}
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-0">Catalogue</h1>
-            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-                <i class="bi bi-list fs-4"></i>
-            </button>
+        <div class="mb-4">
+            <h1><i class="bi bi-speedometer2"></i> Categories</h1>
         </div>
 
         {# Onglets de navigation - Liste des catégories #}
@@ -36,6 +33,7 @@
         {% endif %}
 
         {# Section d'administration (visible uniquement pour les gérants) #}
+        {% if is_granted('ROLE_ADMIN') %}
         <div class="mt-5 pt-4 border-top">
             <h3>Gérant</h3>
             <div class="d-flex gap-2 flex-wrap mt-3">
@@ -44,5 +42,6 @@
                 </a>
             </div>
         </div>
+        {% endif %}
     </div>
 {% endblock %}

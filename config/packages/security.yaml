@@ -3,6 +3,11 @@ security:
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
+    # Hiérarchie des rôles
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER, ROLE_CLIENT]
+        ROLE_USER: [ROLE_CLIENT]
+
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
@@ -29,8 +34,23 @@ security:
                 target: app_home
 
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # Routes publiques (pas de restriction)
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/utilisateur/new, roles: PUBLIC_ACCESS }
+        - { path: ^/catalogue, roles: PUBLIC_ACCESS }
+        
+        # Routes pour les clients connectés
+        - { path: ^/panier, roles: ROLE_CLIENT }
+        - { path: ^/commande, roles: ROLE_CLIENT }
+        - { path: ^/utilisateur, roles: ROLE_CLIENT }
+        - { path: ^/category, roles: ROLE_CLIENT }
+        - { path: ^/produit, roles: ROLE_CLIENT }
+        - { path: ^/tag, roles: ROLE_CLIENT }
+        
+        # Routes pour les administrateurs
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        
 
 when@test:
     security:
