@@ -14,7 +14,7 @@ class SecurityController extends AbstractController
     {
         // Si l'utilisateur est déjà connecté, rediriger vers le catalogue
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_catalogue');
+            return $this->redirectToRoute('app_home');
         }
 
         // Récupérer l'erreur de connexion s'il y en a une

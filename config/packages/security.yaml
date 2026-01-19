@@ -20,13 +20,13 @@ security:
             form_login:
                 login_path: /login
                 check_path: /login
-                default_target_path: app_catalogue
-                username_parameter: form[adresseMail]
-                password_parameter: form[password]
+                default_target_path: app_home
+                username_parameter: _username
+                password_parameter: _password
                 enable_csrf: true
             logout:
                 path: app_logout
-                target: app_catalogue
+                target: app_home
 
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
