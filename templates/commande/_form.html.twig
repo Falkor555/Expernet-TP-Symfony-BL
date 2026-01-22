@@ -1,4 +1,25 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+<div class="form-container">
+    {{ form_start(form, {'attr': {'class': 'commande-form'}}) }}
+        <div class="form-group mb-4">
+            {{ form_label(form.dateLivraison, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.dateLivraison, {'attr': {'class': 'form-control'}}) }}
+            {{ form_help(form.dateLivraison) }}
+            {{ form_errors(form.dateLivraison) }}
+        </div>
+
+        <div class="form-group mb-4">
+            {{ form_label(form.creneau, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.creneau, {'attr': {'class': 'form-select'}}) }}
+            {{ form_help(form.creneau) }}
+            {{ form_errors(form.creneau) }}
+        </div>
+
+        {{ form_rest(form) }}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> {{ button_label|default('Créer la commande') }}
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
