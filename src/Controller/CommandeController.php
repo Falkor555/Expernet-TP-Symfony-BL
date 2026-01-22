@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\PanierService;
 
 #[Route('/commande')]
 final class CommandeController extends AbstractController
@@ -23,19 +24,24 @@ final class CommandeController extends AbstractController
     }
 
     #[Route('/new', name: 'app_commande_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, PanierService $panierService): Response
     {
         $commande = new Commande();
         $form = $this->createForm(CommandeType::class, $commande);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($commande);
+            $commandeForm = $form->getData();
+            $commandeForm->setDateCommande(new \DateTime());
+            $commandeForm->setTotal((string)$panierService->getTotal());
+            $commandeForm->setStatut('En attente de validation');
+            $commandeForm->setUtilisateur($this->getUser());
+            $entityManager->persist($commandeForm);
             $entityManager->flush();
-
+    
             return $this->redirectToRoute('app_commande_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('commande/new.html.twig', [
             'commande' => $commande,
             'form' => $form,

@@ -1,0 +1,45 @@
+/* Styles spécifiques pour les formulaires de commande */
+
+.commande-form .form-help {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+.commande-form .form-error {
+    display: block;
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.form-actions .btn {
+    min-width: 200px;
+}
+
+.form-select:disabled {
+    background-color: #e9ecef;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.page-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.page-header h1 i {
+    font-size: 1.8rem;
+}
+
+.form-container {
+    width: 100%;
+}
