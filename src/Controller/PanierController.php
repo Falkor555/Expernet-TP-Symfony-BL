@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/panier')]
 class PanierController extends AbstractController
@@ -98,5 +99,13 @@ class PanierController extends AbstractController
         $this->addFlash('info', 'Panier vidé.');
 
         return $this->redirectToRoute('app_panier_index');
+    }
+
+    #[Route('/count', name: 'app_panier_count', methods: ['GET'])]
+    public function count(PanierService $panierService): JsonResponse
+    {
+        return $this->json([
+            'count' => $panierService->getCount()
+        ]);
     }
 }

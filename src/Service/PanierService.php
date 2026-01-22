@@ -5,21 +5,36 @@ namespace App\Service;
 use App\Entity\Produit;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class PanierService
 {
-    private $session;
-    private $em;
+    private RequestStack $requestStack;
+    private EntityManagerInterface $em;
 
     public function __construct(RequestStack $requestStack, EntityManagerInterface $em)
     {
-        $this->session = $requestStack->getSession();
+        $this->requestStack = $requestStack;
         $this->em = $em;
+    }
+
+    private function getSession(): ?SessionInterface
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request && $request->hasSession()) {
+            return $request->getSession();
+        }
+        return null;
     }
 
     public function add(int $id): void
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return;
+        }
+
+        $panier = $session->get('panier', []);
 
         if (!empty($panier[$id])) {
             $panier[$id]++;
@@ -27,48 +42,67 @@ class PanierService
             $panier[$id] = 1;
         }
 
-        $this->session->set('panier', $panier);
+        $session->set('panier', $panier);
     }
 
     public function remove(int $id): void
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return;
+        }
+
+        $panier = $session->get('panier', []);
 
         if (!empty($panier[$id])) {
             unset($panier[$id]);
         }
 
-        $this->session->set('panier', $panier);
+        $session->set('panier', $panier);
     }
 
     public function decrease(int $id): void
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return;
+        }
+
+        $panier = $session->get('panier', []);
         if (isset($panier[$id])) {
             $panier[$id]--;
             if ($panier[$id] <= 0) {
                 unset($panier[$id]);
             }
-            $this->session->set('panier', $panier);
+            $session->set('panier', $panier);
         }
     }
 
-
     public function updateQuantity(int $id, int $quantite): void
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return;
+        }
+
+        $panier = $session->get('panier', []);
 
         if ($quantite <= 0) {
             $this->remove($id);
         } else {
             $panier[$id] = $quantite;
-            $this->session->set('panier', $panier);
+            $session->set('panier', $panier);
         }
     }
 
     public function getFullPanier(): array
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return [];
+        }
+
+        $panier = $session->get('panier', []);
         $panierWithData = [];
 
         foreach ($panier as $id => $quantite) {
@@ -97,12 +131,22 @@ class PanierService
 
     public function clear(): void
     {
-        $this->session->remove('panier');
+        $session = $this->getSession();
+        if (!$session) {
+            return;
+        }
+
+        $session->remove('panier');
     }
 
     public function getCount(): int
     {
-        $panier = $this->session->get('panier', []);
+        $session = $this->getSession();
+        if (!$session) {
+            return 0;
+        }
+
+        $panier = $session->get('panier', []);
         return array_sum($panier);
     }
 }
