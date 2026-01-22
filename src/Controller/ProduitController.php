@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/produit')]
 final class ProduitController extends AbstractController
@@ -18,6 +19,7 @@ final class ProduitController extends AbstractController
     {
     }
     #[Route(name: 'app_produit_index', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(ProduitRepository $produitRepository): Response
     {
         return $this->render('produit/index.html.twig', [
@@ -26,6 +28,7 @@ final class ProduitController extends AbstractController
     }
 
     #[Route('/new', name: 'app_produit_new')]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request): Response
     {
         $produit = new Produit();
@@ -61,6 +64,7 @@ final class ProduitController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_produit_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ProduitType::class, $produit);
@@ -79,6 +83,7 @@ final class ProduitController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_produit_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->getPayload()->getString('_token'))) {
