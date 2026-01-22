@@ -27,8 +27,8 @@
                 <td>{{ commande.total }}</td>
                 <td>{{ commande.statut }}</td>
                 <td>
-                    <a href="{{ path('app_commande_show', {'id': commande.id}) }}">show</a>
-                    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}">edit</a>
+                    <a href="{{ path('app_commande_show', {'id': commande.id}) }}">Voir ma commande</a>
+                    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}">Modifier ma commande</a>
                 </td>
             </tr>
         {% else %}
@@ -39,5 +39,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_commande_new') }}">Create new</a>
+    {# <a href="{{ path('app_commande_new') }}">Create new</a> #}
 {% endblock %}
