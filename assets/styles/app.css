@@ -391,6 +391,42 @@ h1 {
     border-bottom: 2px solid var(--border-light);
 }
 
+/* Badge du panier dans la navbar */
+.navbar .bi-cart3 {
+    transition: transform 0.2s ease;
+}
+
+.navbar .bi-cart3:hover {
+    transform: scale(1.1);
+}
+
+.navbar .badge {
+    font-size: 0.7rem;
+    padding: 0.35em 0.5em;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, 0) scale(1);
+    }
+    50% {
+        transform: translate(-50%, 0) scale(1.1);
+    }
+}
+
+/* Style du lien panier dans la navbar */
+.navbar a[href*="panier"] {
+    display: inline-block;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.navbar a[href*="panier"]:hover {
+    background-color: var(--secondary-color);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .splash-title {

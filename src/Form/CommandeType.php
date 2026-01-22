@@ -26,7 +26,7 @@ class CommandeType extends AbstractType
                     'min' => (new \DateTime('tomorrow'))->format('Y-m-d'),
                     'class' => 'form-control',
                 ],
-                'help' => 'Du mardi au dimanche uniquement (fermé le lundi)'
+                'help' => 'La Pâtisserie Ancelly est ouverte du mardi au dimanche (nous sommes fermés le lundi)'
             ])
             ->add('creneau', ChoiceType::class, [
                 'mapped' => false,
@@ -36,7 +36,7 @@ class CommandeType extends AbstractType
                     'class' => 'form-select',
                 ],
                 'placeholder' => 'Choisir un créneau horaire',
-                'help' => 'De 6h00 à 18h30, créneaux toutes les 30 minutes'
+                'help' => 'Vous pouvez récupérer votre commande de 6h00 à 18h30'
             ])
         ;
 
