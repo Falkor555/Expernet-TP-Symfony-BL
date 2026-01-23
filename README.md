@@ -71,8 +71,8 @@ Exemples :
 - Inscription
 - Connexion / Déconnexion
 - Rôles :
-    - **Client** (ROLE_CUSTOMER)
-    - **Gérant** (ROLE_MANAGER)
+    - **Client** (ROLE_CLIENT)
+    - **Gérant** (ROLE_ADMIN)
 - Page de **profil utilisateur** (infos personnelles + commandes)
 
 ---
