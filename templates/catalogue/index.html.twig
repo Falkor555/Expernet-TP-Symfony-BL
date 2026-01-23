@@ -2,6 +2,11 @@
 
 {% block title %}Catalogue{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/catalogue.css') }}">
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid px-3 py-4">
         {# Header avec bouton menu #}
@@ -11,11 +16,11 @@
 
         {# Onglets de navigation - Liste des catégories #}
         <ul class="nav nav-tabs border-0 mb-4">
-            <li class="nav-item">
+            {# <li class="nav-item">
                 <a class="nav-link active border-0 border-bottom border-3 text-dark" href="{{ path('app_catalogue') }}">
                     Tous les produits
                 </a>
-            </li>
+            </li> #}
             {% for category in categories|default([]) %}
                 <li class="nav-item">
                     <a class="nav-link text-muted border-0"
@@ -40,7 +45,7 @@
                             </p>
                             <div class="d-flex justify-content-between align-items-center mt-auto">
                                 <span class="text-danger fw-bold">{{ produit.prix }}€</span>
-                                <button class="btn btn-danger rounded-circle p-2" type="button"
+                                <button class="btn btn-danger rounded-circle" type="button"
                                         onclick="event.preventDefault(); event.stopPropagation(); addToCart({{ produit.id }});">
                                     <i class="bi bi-plus fs-5"></i>
                                 </button>
