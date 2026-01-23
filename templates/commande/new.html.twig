@@ -10,17 +10,69 @@
 {% block body %}
 <div class="container my-5">
     <div class="page-header">
-        <h1><i class="bi bi-cart-check"></i> Créer une nouvelle commande</h1>
+        <h1><i class="bi bi-cart-check"></i> Valider ma commande</h1>
     </div>
 
-    <div class="auth-container">
-        <div class="auth-card">
-            {{ include('commande/_form.html.twig') }}
-            
-            <div class="text-center mt-4">
-                <a href="{{ path('app_commande_index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Retour à la liste
-                </a>
+    <div class="row">
+        <!-- Colonne de gauche : Récapitulatif du panier -->
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-4 pb-3">
+                    <h5 class="mb-0"><i class="bi bi-basket"></i> Récapitulatif de votre panier</h5>
+                </div>
+                <div class="card-body">
+                    {% if panier is not empty %}
+                        {% for item in panier %}
+                        <div class="panier-item d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ item.produit.nom }}</h6>
+                                <p class="text-muted small mb-0">{{ item.produit.prix }}€ × {{ item.quantite }}</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="fw-bold text-danger">{{ (item.produit.prix * item.quantite)|number_format(2, ',', ' ') }}€</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="panier-total mt-4 pt-3 border-top">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Sous-total</span>
+                                <span>{{ total|number_format(2, ',', ' ') }}€</span>
+                            </div>
+                            {# <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Frais de service</span>
+                                <span class="text-success">Gratuit</span>
+                            </div> #}
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span class="h5 mb-0">Total</span>
+                                <span class="h5 mb-0 text-danger fw-bold">{{ total|number_format(2, ',', ' ') }}€</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Votre panier est vide
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne de droite : Formulaire de commande -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-4 pb-3">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Informations de livraison</h5>
+                </div>
+                <div class="card-body">
+                    {{ include('commande/_form.html.twig') }}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ path('app_panier_index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour au panier
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -29,5 +81,134 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/commande-validation.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('[data-validate-monday="true"]');
+            const creneauSelect = document.querySelector('select[id*="creneau"]');
+            const form = dateInput ? dateInput.closest('form') : null;
+            const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+            
+            // Créer le conteneur de toast
+            let toastContainer = document.querySelector('.toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            function showToast(message, icon = '⚠️') {
+                const toastId = 'toast-' + Date.now();
+                const toastHTML = `
+                    <div id="${toastId}" class="toast align-items-center text-white border-0 show" role="alert" style="background-color: #FF6B4A; min-width: 350px; box-shadow: 0 4px 12px rgba(255, 107, 74, 0.4);">
+                        <div class="d-flex">
+                            <div class="toast-body d-flex align-items-center" style="font-size: 1rem;">
+                                <span style="font-size: 1.8rem; margin-right: 15px;">${icon}</span>
+                                <strong>${message}</strong>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button>
+                        </div>
+                    </div>
+                `;
+                
+                toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+                const toastElement = document.getElementById(toastId);
+                
+                // Auto-suppression après 5 secondes
+                setTimeout(function() {
+                    toastElement.style.opacity = '0';
+                    toastElement.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => toastElement.remove(), 300);
+                }, 5000);
+            }
+            
+            if (!dateInput) {
+                console.error('Champ date non trouvé!');
+                return;
+            }
+            
+            function isMonday(dateString) {
+                if (!dateString) return false;
+                const date = new Date(dateString + 'T12:00:00');
+                return date.getDay() === 1;
+            }
+            
+            function validateDate(showMessage = true) {
+                const value = dateInput.value;
+                
+                if (value && isMonday(value)) {
+                    if (showMessage) {
+                        showToast('La pâtisserie est fermée le lundi. Veuillez choisir un autre jour (mardi à dimanche).', '🍰');
+                    }
+                    dateInput.value = '';
+                    
+                    if (creneauSelect) {
+                        creneauSelect.disabled = true;
+                        creneauSelect.value = '';
+                    }
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                    }
+                    return false;
+                } else if (value && creneauSelect) {
+                    creneauSelect.disabled = false;
+                    if (submitButton && creneauSelect.value) {
+                        submitButton.disabled = false;
+                    }
+                    return true;
+                } else {
+                    if (creneauSelect) {
+                        creneauSelect.disabled = true;
+                        creneauSelect.value = '';
+                    }
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                    }
+                }
+                return !!value;
+            }
+            
+            if (creneauSelect) {
+                creneauSelect.addEventListener('change', function() {
+                    if (submitButton) {
+                        submitButton.disabled = !dateInput.value || !creneauSelect.value;
+                    }
+                });
+            }
+            
+            dateInput.addEventListener('change', function() {
+                validateDate(true); // Afficher le toast
+            });
+            
+            dateInput.addEventListener('blur', function() {
+                validateDate(true); // Afficher le toast
+            });
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!dateInput.value || !creneauSelect.value) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        showToast('Veuillez sélectionner une date et un créneau de livraison.', '⚠️');
+                        return false;
+                    }
+                    
+                    if (isMonday(dateInput.value)) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        showToast('La pâtisserie est fermée le lundi.', '🍰');
+                        dateInput.value = '';
+                        if (creneauSelect) creneauSelect.disabled = true;
+                        if (submitButton) submitButton.disabled = true;
+                        return false;
+                    }
+                }, true);
+            }
+            
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+            validateDate(false); // Ne pas afficher le toast au chargement
+        });
+    </script>
 {% endblock %}

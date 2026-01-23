@@ -25,6 +25,7 @@ class CommandeType extends AbstractType
                 'attr' => [
                     'min' => (new \DateTime('tomorrow'))->format('Y-m-d'),
                     'class' => 'form-control',
+                    'data-validate-monday' => 'true', // Attribut pour JavaScript
                 ],
                 'help' => 'La Pâtisserie Ancelly est ouverte du mardi au dimanche (nous sommes fermés le lundi)'
             ])
