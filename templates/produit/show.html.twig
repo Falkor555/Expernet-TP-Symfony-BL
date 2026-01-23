@@ -1,48 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Produit{% endblock %}
+{% block title %}{{ produit.nom }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('produit') }}
+{% endblock %}
 
 {% block body %}
-    <h1>Produit</h1>
+<div class="produit-simple-container">
+    <!-- Bouton retour -->
+    <div class="produit-header-simple">
+        <button class="btn-back-simple" onclick="window.history.back();">
+            <i class="bi bi-arrow-left"></i>
+        </button>
+    </div>
 
-    <table class="table">
-        <tbody>
-        {% if is_granted('ROLE_ADMIN') %}
-            <tr>
-                <th>Id</th>
-                <td>{{ produit.id }}</td>
-            </tr>
+    <!-- Image du produit -->
+    <div class="produit-image-wrapper-simple">
+        <div class="produit-image-placeholder-simple">
+            🎂
+        </div>
+    </div>
+
+    <!-- Contenu -->
+    <div class="produit-content-simple">
+        <!-- Titre et Prix -->
+        <div class="produit-title-row-simple">
+            <h1 class="produit-title-simple">{{ produit.nom }}</h1>
+            <span class="produit-price-simple">{{ produit.prix }}€</span>
+        </div>
+
+        <!-- Description -->
+        <p class="produit-description-simple">
+            {{ produit.description }}
+        </p>
+    </div>
+
+    <!-- Footer avec bouton -->
+    <div class="produit-footer-simple">
+        <div class="total-price-simple">
+            <p class="total-label-simple">Total price</p>
+            <p class="total-value-simple">{{ produit.prix }}€</p>
+        </div>
+        {% if is_granted('ROLE_CLIENT') %}
+        <form method="post" action="{{ path('app_panier_add', {'id': produit.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('panier_add') }}">
+            <button type="submit" class="btn-add-cart-simple">
+                Ajouter au panier
+            </button>
+        </form>
+        {% else %}
+        <button class="btn-add-cart-simple" onclick="alert('Veuillez vous connecter')">
+            Ajouter au panier
+        </button>
         {% endif %}
-            <tr>
-                <th>Nom</th>
-                <td>{{ produit.nom }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ produit.description }}</td>
-            </tr>
-            <tr>
-                <th>Prix</th>
-                <td>{{ produit.prix }}</td>
-            </tr>
-            {% if is_granted('ROLE_ADMIN') %}
-            <tr>
-                <th>DateCreation</th>
-                <td>{{ produit.dateCreation ? produit.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>IsActive</th>
-                <td>{{ produit.isActive ? 'Yes' : 'No' }}</td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_produit_index') }}">back to list</a>
-
-    <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
-    {% endif %}
-
-    {{ include('produit/_delete_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}
